@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: banorte-ns
+---
+# 2. SECRET: Seguridad para credenciales sensibles
+# Aquí se define la contraseña "temp4now"
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secret
+  namespace: banorte-ns
+type: Opaque
+stringData:
+  password: "temp4now"
+---
+
+# 3. CONFIGMAP: Variables de configuración no sensibles
+# Aquí se asigna el usuario de la base de datos como "app"
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-config
+  namespace: banorte-ns
+data:
+  user: "app"
+---
+
+# 4. Almacenamiento persistente
+# Garantiza que los datos de la base de datos no se pierdan al reiniciar el pod
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: banorte-ns
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+
+# 5. DEPLOYMENT: Orquestador del servicio
+# Aquí se encuentra el deployment con el nombre exacto "prueba-especial-deployment"
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prueba-especial-deployment
+  namespace: banorte-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: multi-container-app
+  template:
+    metadata:
+      labels:
+        app: multi-container-app
+    spec:
+      containers:
+
+      # 5.1 CONTENEDOR 1: Base de datos ("database")
+      # Utiliza PostgreSQL, inyecta credenciales del Secret/ConfigMap y monta el volumen persistente
+
+      - name: database
+        image: postgres:15-alpine
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: password
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: user
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: db-storage
+
+      # 5.2 CONTENEDOR 2: Aplicación backend ("backend")
+      # Utiliza la imagen alojada en Docker Hub con la app web que muestra el nombre y fecha
+
+      - name: backend
+        image: jafetiwis/banorte-app:latest
+        ports:
+        - containerPort: 8080
+
+      # VOLÚMENES: Enlace del PVC con el contenedor de base de datos
+
+      volumes:
+      - name: db-storage
+        persistentVolumeClaim:
+          claimName: postgres-pvc
