@@ -1,10 +1,10 @@
---- RESPUESTA HTTP ---
-Aplicación funcionando. Nombre: Jafet Alberto Vicencio, Fecha: Tue Sep 29 2026 23:57:33 GMT+0000 (Coordinated Universal Time)
+--- RESPUESTA HTTP (Destino: http://localhost:8080) ---
+Aplicación funcionando. Nombre: Jafet Alberto Vicencio, Fecha: Wed Sep 30 2026 00:27:10 GMT+0000 (Coordinated Universal Time)
 --------------------------------------------------
 --- VALIDACIÓN DE PROCESOS / ESTADO INTERNO (EXEC) ---
 PID   USER     TIME  COMMAND
     1 root      0:00 node app.js
-   18 root      0:00 ps aux
+   24 root      0:00 ps aux
 
 --- LOGS DE LOS CONTENEDORES ---
 Aplicación escuchando en http://localhost:8080
