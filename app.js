@@ -4,7 +4,9 @@ const port = 8080;
 
 app.get('/', (req, res) => {
     const date = new Date();
-    const mensaje = `Aplicación funcionando. Nombre: Jafet Alberto Vicencio, Fecha: ${date}`;
+    const nombre = process.env.NOMBRE || 'Jafet Alberto Vicencio';
+    const mensaje = `Aplicación funcionando. Nombre: ${nombre}, Fecha: ${date}`;
+    
     console.log(mensaje);
     res.send(mensaje);
 });
