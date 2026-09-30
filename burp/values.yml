@@ -1,0 +1,29 @@
+# ==============================================================================
+# Archivo de configuración: values.yml (Burp Suite Enterprise)
+# Descripción: Parámetros de despliegue para Helm/Kubernetes
+# ==============================================================================
+installationEnvironment: KUBERNETES
+
+database:
+  # Configuración de base de datos integrada de Enterprise Server
+  enterpriseServerDatabase:
+    enabled: true
+    # Credenciales y parámetros de conexión
+    name: "burp-enterprise-db"
+    user: "postgres"
+    password: "temp4now"
+  
+  # Configuración de base de datos para Scanning Resource
+  scanningResourceDatabase:
+    enabled: true
+    user: "postgres"
+    password: "temp4now"
+
+service:
+  type: ClusterIP
+  port: 8080
+
+# Opciones de persistencia y escalabilidad
+persistence:
+  enabled: true
+  size: 10Gi
